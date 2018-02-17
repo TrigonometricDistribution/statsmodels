@@ -269,12 +269,18 @@ class Power(object):
             success = 1
         else:
             # try backup
-            #TODO: check more cases to make this robust
-            val, infodict, ier, msg = optimize.fsolve(func, start_value,
-                                                      full_output=True) #scalar
-            #val = optimize.newton(func, start_value) #scalar
-            fval = infodict['fvec']
-            fit_res.append(infodict)
+            # TODO: check more cases to make this robust
+            if not np.isnan(start_value):
+                val, infodict, ier, msg = optimize.fsolve(func, start_value,
+                                                          full_output=True) #scalar
+                #val = optimize.newton(func, start_value) #scalar
+                fval = infodict['fvec']
+                fit_res.append(infodict)
+            else:
+                ier = -1
+                fval = 1
+                fit_res.append([None])
+
             if ier == 1 and np.abs(fval) < 1e-4 :
                 success = 1
             else:
@@ -622,7 +628,7 @@ class NormalIndPower(Power):
 
     def power(self, effect_size, nobs1, alpha, ratio=1,
               alternative='two-sided'):
-        '''Calculate the power of a t-test for two independent sample
+        '''Calculate the power of a z-test for two independent sample
 
         Parameters
         ----------
@@ -641,8 +647,6 @@ class NormalIndPower(Power):
         ratio : float
             ratio of the number of observations in sample 2 relative to
             sample 1. see description of nobs1
-            The default for ratio is 1; to solve for ratio given the other
-            arguments it has to be explicitly set to None.
         alternative : string, 'two-sided' (default), 'larger', 'smaller'
             extra argument to choose whether the power is calculated for a
             two-sided (default) or one sided test. The one-sided test can be

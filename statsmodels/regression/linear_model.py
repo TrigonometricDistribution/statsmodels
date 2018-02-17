@@ -165,8 +165,7 @@ def _get_sigma(sigma, nobs):
         if sigma.shape != (nobs, nobs):
             raise ValueError("Sigma must be a scalar, 1d of length %s or a 2d "
                              "array of shape %s x %s" % (nobs, nobs, nobs))
-        cholsigmainv = np.linalg.cholesky(np.linalg.pinv(sigma)).T
-
+        cholsigmainv = np.linalg.cholesky(np.linalg.inv(sigma)).T
     return sigma, cholsigmainv
 
 
@@ -1335,7 +1334,7 @@ class RegressionResults(base.LikelihoodModelResults):
     f_pvalue
         p-value of the F-statistic
     fittedvalues
-        The predicted the values for the original (unwhitened) design.
+        The predicted values for the original (unwhitened) design.
     het_scale
         adjusted squared residuals for heteroscedasticity robust standard
         errors. Is only available after `HC#_se` or `cov_HC#` is called.
